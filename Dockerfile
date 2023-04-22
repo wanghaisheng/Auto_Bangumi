@@ -1,18 +1,41 @@
 # syntax=docker/dockerfile:1
-FROM python:3.10-slim-buster
+FROM python:3.11-alpine
 
-WORKDIR /auto_bangumi
+ENV TZ=Asia/Shanghai \
+    PUID=1000 \
+    PGID=1000 \
+    UMASK=022
 
-ADD requirements.txt .
+WORKDIR /app
 
-RUN pip install -r requirements.txt
+COPY src/requirements.txt .
 
-ENV TZ=Asia/Shanghai
+RUN python3 -m pip install --upgrade pip \
+    && pip install -r requirements.txt --no-cache-dir
 
-ADD ./auto_bangumi /auto_bangumi
-ADD ./config /config
-ADD ./templates /templates
+COPY --chmod=755 src/. /app/.
 
-RUN chmod a+x run.sh
+RUN apk add --no-cache \
+    curl \
+    shadow \
+    su-exec \
+    bash
 
-CMD ["./run.sh"]
+# Download WebUI
+RUN wget "https://github.com/Rewrite0/Auto_Bangumi_WebUI/releases/download/$(curl 'https://api.github.com/repos/Rewrite0/Auto_Bangumi_WebUI/releases/latest' | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')/dist.zip" && \
+    unzip dist.zip && \
+    mv dist templates
+
+RUN addgroup -S auto_bangumi -g 1000 && \
+    adduser -S auto_bangumi -G auto_bangumi -h /home/auto_bangumi -u 1000 && \
+    usermod -s /bin/bash auto_bangumi && \
+    mkdir -p "config" && \
+    mkdir -p "data" && \
+    chmod a+x \
+        run.sh
+
+EXPOSE 7892
+
+VOLUME [ "/app/config" , "/app/data"]
+
+CMD ["sh", "run.sh"]

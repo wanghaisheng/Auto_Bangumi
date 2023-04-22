@@ -1,0 +1,46 @@
+name: 问题反馈
+description: File a bug report
+title: "[错误报告]"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        描述问题前，请先更新到最新版本。
+        最新版本: [version](https://img.shields.io/docker/v/estrellaxd/auto_bangumi)
+        如果更新到最新版本后仍然有问题，请先查阅 [FAQ](https://github.com/EstrellaXD/Auto_Bangumi/wiki/FAQ)。
+        确认非上述问题后，请详细描述你所遇到的问题，并附上相应信息。
+        如果问题已经列在 [FAQ](https://github.com/EstrellaXD/Auto_Bangumi/wiki/FAQ) 中，会直接关闭 issue。
+        解析器问题请转到[专用模板](https://github.com/EstrellaXD/Auto_Bangumi/issues/new?assignees=&labels=bug&template=parser_bug.yml&title=%5B解析器错误%5D)，重命名问题请到[专用模板](https://github.com/EstrellaXD/Auto_Bangumi/issues/new?assignees=&labels=bug&template=rename_bug.yml&title=%5B重命名错误%5D)
+  - type: input
+    id: version
+    attributes:
+      label: 当前程序版本
+      description: 遇到问题时程序所在的版本号
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: 问题类型
+      description: 你在以下哪个部分碰到了问题
+      options:
+        - WebUI
+        - 程序运行问题
+        - 其他问题
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 问题描述
+      description: 请详细描述你碰到的问题
+      placeholder: "问题描述"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 发生问题时系统日志
+      description: 问题出现时，程序运行日志请复制到这里。
+      render: shell

@@ -4,6 +4,8 @@ services:
     container_name: AutoBangumi
     environment:
       - TZ=Asia/Shanghai
+      - PGID=${GID}
+      - PUID=${UID}
       - AB_INTERVAL_TIME=1800
       - AB_DOWNLOADER_HOST=localhost:${QB_PORT}
       - AB_DOWNLOADER_USERNAME=admin
@@ -18,6 +20,8 @@ services:
       - AB_SEASON_ONE=True
     networks:
       - auto_bangumi
+    ports:
+      - 7892:7892
     volumes:
       - auto_bangumi:/config
     dns:
